@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { ReactElement } from "react";
@@ -5,6 +6,7 @@ import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
 import { styled } from "@stitches/react";
 import { useTheme } from "next-themes";
+import { api } from "src/services/api";
 const Text = styled("p", {
   fontFamily: "$system",
   color: "$hiContrast",
@@ -81,3 +83,19 @@ Home.getLayout = function getLayout(page: ReactElement) {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async (_context) => {
+  try {
+    const result = await api.get("/profile").then((response) => response.data);
+
+    return {
+      props: {
+        content: result,
+      },
+    };
+  } catch {
+    return {
+      notFound: true,
+    };
+  }
+};
